@@ -66,7 +66,7 @@ export async function updateUserService(
  * @param id userId
  * @returns
  */
-export async function deleteUserService(id: number): Promise<any> {
+export async function deleteUserService(id: number): Promise<User> {
   const user = await getUserService(id);
 
   const userRepo = getRepository(User);

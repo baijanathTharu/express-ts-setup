@@ -102,3 +102,14 @@ export const verifyToken = (token: string, key: string) => {
     });
   });
 };
+
+/**
+ * This removes password from response
+ *
+ * @param responseObj responseToBeSent
+ * @returns
+ */
+export const sanitizeResponse = (responseObj: any) => {
+  const { password = undefined, ...rest } = { ...responseObj };
+  return rest;
+};

@@ -5,7 +5,12 @@ import {
   PRIVATE_KEY_FOR_ACCESSTOKEN,
   PRIVATE_KEY_FOR_REFRESHTOKEN,
 } from '@shared/constants';
-import { createToken, encryptPassword, wrapPromise } from '@shared/functions';
+import {
+  createToken,
+  encryptPassword,
+  sanitizeResponse,
+  wrapPromise,
+} from '@shared/functions';
 
 import {
   addUserService,
@@ -28,7 +33,7 @@ export async function getUser(req: Request, res: Response): Promise<void> {
 
   const user = await getUserService(id);
 
-  res.json({ data: user });
+  res.json({ data: sanitizeResponse(user) });
 }
 
 /**
@@ -40,7 +45,11 @@ export async function getUser(req: Request, res: Response): Promise<void> {
  */
 export async function getUsers(req: Request, res: Response): Promise<void> {
   const users = await getAllUsersService();
-  res.json({ users: users });
+
+  // Todo: pagination
+
+  const sanitizedUsers = users.map((user) => sanitizeResponse(user));
+  res.json({ data: sanitizedUsers });
 }
 
 /**
@@ -67,12 +76,13 @@ export async function addUser(req: Request, res: Response): Promise<void> {
     createToken(payload, PRIVATE_KEY_FOR_ACCESSTOKEN, 60 * 15)
   );
   if (accessTokenErr) throw accessTokenErr;
+
   const [refreshToken, refreshTokenErr] = await wrapPromise(
     createToken(payload, PRIVATE_KEY_FOR_REFRESHTOKEN, 60 * 60 * 24 * 7)
   );
   if (refreshTokenErr) throw refreshTokenErr;
 
-  res.json({ data: user, accessToken, refreshToken });
+  res.json({ data: sanitizeResponse(user), accessToken, refreshToken });
 }
 
 /**
@@ -96,7 +106,7 @@ export async function updateUser(req: Request, res: Response): Promise<void> {
   }
 
   const updatedUser = await updateUserService(id, payload);
-  res.json({ data: updatedUser });
+  res.json({ data: sanitizeResponse(updatedUser) });
 }
 
 /**
@@ -110,5 +120,5 @@ export async function deleteUser(req: Request, res: Response): Promise<void> {
   const id = parseInt(req.params.id);
   const deleted = await deleteUserService(id);
 
-  res.json({ data: deleted });
+  res.json({ data: sanitizeResponse(deleted) });
 }
