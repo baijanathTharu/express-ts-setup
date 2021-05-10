@@ -1,91 +1,50 @@
-import {
-  IsAlphanumeric,
-  IsBoolean,
-  IsInt,
-  IsOptional,
-  IsString,
-  Length,
-} from 'class-validator';
+import { IsOptional, IsString, Length } from 'class-validator';
 
 export interface IUser {
-  name: string;
-  description: string;
-  isPublished: string | boolean;
-  views: number;
-  filename: string;
+  username: string;
+  email: string;
+  password: string;
 }
 
 export class UserDto implements IUser {
   @Length(10, 20)
-  name: string;
+  username: string;
 
   @IsString()
-  description: string;
+  email: string;
 
-  @IsAlphanumeric()
-  filename: string;
+  @IsString()
+  password: string;
 
-  @IsInt()
-  views: number;
-
-  @IsBoolean()
-  isPublished: boolean;
-
-  constructor({ name, description, filename, views, isPublished }: any) {
-    if (isPublished === 'true') {
-      isPublished = true;
-    } else {
-      isPublished = false;
-    }
-    this.name = name;
-    this.description = description;
-    this.filename = filename;
-    this.views = parseInt(views);
-    this.isPublished = isPublished;
+  constructor({ username, email, password }: any) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
   }
 }
 
 export class UpdateUserDto implements IUser {
   @Length(10, 20)
   @IsOptional()
-  name: string;
+  username: string;
 
   @IsString()
   @IsOptional()
-  description: string;
+  email: string;
 
-  @IsAlphanumeric()
+  @IsString()
   @IsOptional()
-  filename: string;
+  password: string;
 
-  @IsInt()
-  @IsOptional()
-  views: number;
-
-  @IsBoolean()
-  @IsOptional()
-  isPublished: boolean;
-
-  constructor({ name, description, filename, views, isPublished }: any) {
-    if (isPublished === 'true') {
-      isPublished = true;
-    } else {
-      isPublished = false;
+  constructor({ username, email, password }: any) {
+    if (username) {
+      this.username = username;
     }
-    if (name) {
-      this.name = name;
+    if (email) {
+      this.email = email;
     }
-    if (description) {
-      this.description = description;
-    }
-    if (filename) {
-      this.filename = filename;
-    }
-    if (views) {
-      this.views = parseInt(views);
-    }
-    if (isPublished) {
-      this.isPublished = isPublished;
+    if (password) {
+      this.password = password;
     }
   }
 }

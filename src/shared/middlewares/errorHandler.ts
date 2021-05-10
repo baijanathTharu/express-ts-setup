@@ -8,11 +8,16 @@ export const errorHandler = (fn: Function) => {
   return function (req: Request, res: Response, next: NextFunction) {
     fn(req, res, next).catch((e: any) => {
       if (typeof e === 'string') {
-        res.status(BAD_REQUEST).json({
+        return res.status(BAD_REQUEST).json({
           message: e,
         });
-        return;
       }
+      if (e.name === 'QueryFailedError') {
+        return res.status(BAD_REQUEST).json({
+          message: e.detail,
+        });
+      }
+      // logger.err('message: ' + e.detail);
       next(e);
     });
   };
