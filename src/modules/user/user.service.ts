@@ -1,3 +1,4 @@
+import { mapPayloadToRepo } from '@shared/functions';
 import { getRepository } from 'typeorm';
 import { IUser } from './dto/user.dto';
 import { User } from './user.entity';
@@ -8,16 +9,18 @@ import { User } from './user.entity';
  * @param user IUser
  * @returns user
  */
-export async function addUserService(user: IUser): Promise<User> {
+export async function addUserService(payload: IUser): Promise<User> {
   const userRepo = getRepository(User);
 
-  const userToSave = new User();
+  // const userToSave = new User();
 
-  userToSave.name = user.name;
-  userToSave.description = user.description;
-  userToSave.filename = user.filename;
-  userToSave.isPublished = user.isPublished as string;
-  userToSave.views = 1;
+  // userToSave.name = payload.name;
+  // userToSave.description = payload.description;
+  // userToSave.filename = payload.filename;
+  // userToSave.isPublished = payload.isPublished as string;
+  // userToSave.views = 1;
+
+  const userToSave = mapPayloadToRepo(payload, User);
 
   const savedUser = await userRepo.save(userToSave);
   return savedUser;
@@ -58,25 +61,27 @@ export async function updateUserService(
 
   const userToUpdate = await getUserService(id);
 
-  if (name) {
-    userToUpdate.name = name;
-  }
-  if (description) {
-    userToUpdate.description = description;
-  }
-  if (isPublished) {
-    userToUpdate.isPublished = isPublished as string;
-  }
-  if (views) {
-    userToUpdate.views = views;
-  }
-  if (filename) {
-    userToUpdate.filename = filename;
-  }
+  // if (name) {
+  //   userToUpdate.name = name;
+  // }
+  // if (description) {
+  //   userToUpdate.description = description;
+  // }
+  // if (isPublished) {
+  //   userToUpdate.isPublished = isPublished as string;
+  // }
+  // if (views) {
+  //   userToUpdate.views = views;
+  // }
+  // if (filename) {
+  //   userToUpdate.filename = filename;
+  // }
+
+  const updateIt = mapPayloadToRepo(payload, userToUpdate);
 
   const userRepo = getRepository(User);
 
-  const savedUser = await userRepo.save(userToUpdate);
+  const savedUser = await userRepo.save(updateIt);
 
   return savedUser;
 }
