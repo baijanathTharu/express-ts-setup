@@ -12,14 +12,6 @@ import { User } from './user.entity';
 export async function addUserService(payload: IUser): Promise<User> {
   const userRepo = getRepository(User);
 
-  // const userToSave = new User();
-
-  // userToSave.name = payload.name;
-  // userToSave.description = payload.description;
-  // userToSave.filename = payload.filename;
-  // userToSave.isPublished = payload.isPublished as string;
-  // userToSave.views = 1;
-
   const userToSave = mapPayloadToRepo(payload, User);
 
   const savedUser = await userRepo.save(userToSave);
@@ -57,25 +49,7 @@ export async function updateUserService(
   id: number,
   payload: IUser
 ): Promise<User> {
-  const { name, description, isPublished, views, filename } = payload;
-
   const userToUpdate = await getUserService(id);
-
-  // if (name) {
-  //   userToUpdate.name = name;
-  // }
-  // if (description) {
-  //   userToUpdate.description = description;
-  // }
-  // if (isPublished) {
-  //   userToUpdate.isPublished = isPublished as string;
-  // }
-  // if (views) {
-  //   userToUpdate.views = views;
-  // }
-  // if (filename) {
-  //   userToUpdate.filename = filename;
-  // }
 
   const updateIt = mapPayloadToRepo(payload, userToUpdate);
 
