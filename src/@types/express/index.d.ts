@@ -1,3 +1,5 @@
+import { Request } from 'express';
+import { UserDto } from 'src/modules/user/dto/user.dto';
 import { User } from 'src/modules/user/user.entity';
 
 declare module 'express' {
@@ -5,5 +7,6 @@ declare module 'express' {
     body: {
       user: User;
     };
+    userId?: number;
   }
 }

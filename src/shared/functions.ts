@@ -1,4 +1,8 @@
-import { saltRounds } from './constants';
+import {
+  PRIVATE_KEY_FOR_ACCESSTOKEN,
+  PRIVATE_KEY_FOR_REFRESHTOKEN,
+  saltRounds,
+} from './constants';
 import logger from './Logger';
 
 const bcrypt = require('bcrypt');
@@ -31,7 +35,7 @@ export const mapPayloadToRepo = (payload: any, Repo: any) => {
   }
 };
 
-export const wrapPromise = (promise: Promise<string>) => {
+export const wrapPromise = (promise: Promise<string | boolean>) => {
   return promise.then((val) => [val, null]).catch((e) => [null, e]);
 };
 
@@ -56,6 +60,8 @@ export const decryptpassword = (
       plainText,
       hashedPassword,
       function (err: any, result: boolean) {
+        // console.log('res: ', result);
+        // console.log('err: ', err);
         if (err) {
           return reject(err);
         }
@@ -85,19 +91,29 @@ export const createToken = (
   });
 };
 
-export const verifyToken = (token: string, key: string) => {
+export const createTokens = async (payload: any) => {
+  // Todo: create tokens
+  const [accessToken, accessTokenErr] = await wrapPromise(
+    createToken(payload, PRIVATE_KEY_FOR_ACCESSTOKEN, 60 * 5)
+  );
+  if (accessTokenErr) throw accessTokenErr;
+
+  const [refreshToken, refreshTokenErr] = await wrapPromise(
+    createToken(payload, PRIVATE_KEY_FOR_REFRESHTOKEN, 60 * 60 * 24 * 7)
+  );
+  if (refreshTokenErr) throw refreshTokenErr;
+
+  return {
+    accessToken,
+    refreshToken,
+  };
+};
+
+export const verifyToken = (token: string, key: string): Promise<any> => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, key, function (err: any, decoded: any) {
-      if (err) {
-        /*
-          err = {
-            name: 'TokenExpiredError',
-            message: 'jwt expired',
-            expiredAt: 1408621000
-          }
-        */
-        return reject(err);
-      }
+      // console.log({ ...err });
+      if (err) reject(err);
       resolve(decoded);
     });
   });

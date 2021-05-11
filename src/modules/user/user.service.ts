@@ -33,6 +33,18 @@ export async function getUserService(id: number): Promise<User> {
   return user;
 }
 
+export async function getUserByEmailOrUsername(
+  email: string | undefined,
+  username: string | undefined
+): Promise<User> {
+  const userRepo = getRepository(User);
+  const user = await userRepo.find({
+    where: [{ username: username }, { email: email }],
+  });
+  // console.log('user: ', user);
+  return user[0];
+}
+
 /**
  * This gets all users
  *

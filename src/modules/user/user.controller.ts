@@ -7,6 +7,7 @@ import {
 } from '@shared/constants';
 import {
   createToken,
+  createTokens,
   encryptPassword,
   sanitizeResponse,
   wrapPromise,
@@ -20,6 +21,10 @@ import {
   updateUserService,
 } from './user.service';
 import { IUser } from './dto/user.dto';
+import { Role } from './user.entity';
+import { StatusCodes } from 'http-status-codes';
+
+const { FORBIDDEN } = StatusCodes;
 
 /**
  * Get a user.
@@ -69,20 +74,14 @@ export async function addUser(req: Request, res: Response): Promise<void> {
   if (encryptErr) throw encryptErr;
   payload.password = encrypted;
 
+  // add role to user
+  payload.role = Role.USER;
+
   const user = await addUserService(payload);
 
-  // Todo: create tokens
-  const [accessToken, accessTokenErr] = await wrapPromise(
-    createToken(payload, PRIVATE_KEY_FOR_ACCESSTOKEN, 60 * 15)
-  );
-  if (accessTokenErr) throw accessTokenErr;
+  const tokens = await createTokens(sanitizeResponse(user));
 
-  const [refreshToken, refreshTokenErr] = await wrapPromise(
-    createToken(payload, PRIVATE_KEY_FOR_REFRESHTOKEN, 60 * 60 * 24 * 7)
-  );
-  if (refreshTokenErr) throw refreshTokenErr;
-
-  res.json({ data: sanitizeResponse(user), accessToken, refreshToken });
+  res.json({ data: sanitizeResponse(user), ...tokens });
 }
 
 /**
@@ -94,6 +93,13 @@ export async function addUser(req: Request, res: Response): Promise<void> {
  */
 export async function updateUser(req: Request, res: Response): Promise<void> {
   const id = parseInt(req.params.id);
+  const userId = req.userId;
+
+  if (id !== userId) {
+    res.status(FORBIDDEN).json({ message: 'forbidden to update' });
+    return;
+  }
+
   const payload = req.body as any;
 
   // encrypt password
