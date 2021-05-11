@@ -2,12 +2,22 @@ import logger from '@shared/Logger';
 import { validateOrReject } from 'class-validator';
 import { NextFunction, Request, Response } from 'express';
 
-export const validateOrRejectDtos = (dto: any) => {
+export const validateOrRejectDtos = (dto: any, payloadFrom = 'body') => {
   return async function (req: Request, res: Response, next: NextFunction) {
-    const payload = req.body;
+    let payload = null;
+
+    if (payloadFrom === 'body') {
+      payload = req.body;
+    }
+
+    if (payloadFrom === 'query') {
+      payload = req.query;
+    }
 
     try {
       await validateOrReject(new dto(payload));
+      console.log('working');
+
       next();
     } catch (e) {
       logger.err(e);

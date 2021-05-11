@@ -8,5 +8,9 @@ declare module 'express' {
       user: User;
     };
     userId?: number;
+    query?: {
+      page?: number;
+      limit?: number;
+    };
   }
 }

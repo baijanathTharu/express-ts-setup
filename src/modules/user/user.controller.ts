@@ -2,11 +2,6 @@
 import { Request, Response } from 'express';
 
 import {
-  PRIVATE_KEY_FOR_ACCESSTOKEN,
-  PRIVATE_KEY_FOR_REFRESHTOKEN,
-} from '@shared/constants';
-import {
-  createToken,
   createTokens,
   encryptPassword,
   sanitizeResponse,
@@ -49,12 +44,19 @@ export async function getUser(req: Request, res: Response): Promise<void> {
  * @returns
  */
 export async function getUsers(req: Request, res: Response): Promise<void> {
-  const users = await getAllUsersService();
+  let page = 1,
+    limit = 10;
+  if (req.query) {
+    page = req.query.page as number;
+    limit = req.query.limit as number;
+  }
 
-  // Todo: pagination
+  const users = await getAllUsersService(page, limit);
+
+  // Todo: improve pagination
 
   const sanitizedUsers = users.map((user) => sanitizeResponse(user));
-  res.json({ data: sanitizedUsers });
+  res.json({ data: sanitizedUsers, page });
 }
 
 /**
@@ -124,7 +126,17 @@ export async function updateUser(req: Request, res: Response): Promise<void> {
  */
 export async function deleteUser(req: Request, res: Response): Promise<void> {
   const id = parseInt(req.params.id);
-  const deleted = await deleteUserService(id);
+
+  const userId = req.userId;
+
+  if (id !== userId) {
+    res.status(FORBIDDEN).json({
+      error: 'forbidden to delete this id',
+    });
+    return;
+  }
+
+  const deleted = await deleteUserService(userId);
 
   res.json({ data: sanitizeResponse(deleted) });
 }

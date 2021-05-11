@@ -50,9 +50,20 @@ export async function getUserByEmailOrUsername(
  *
  * @returns users
  */
-export async function getAllUsersService(): Promise<User[]> {
+export async function getAllUsersService(
+  page = 1,
+  limit = 10
+): Promise<User[]> {
   const userRepo = getRepository(User);
-  const users = await userRepo.find();
+
+  const skipItems = (page - 1) * limit;
+
+  const users = await userRepo
+    .createQueryBuilder('user')
+    .orderBy('user.createdAt', 'DESC')
+    .offset(skipItems)
+    .limit(limit)
+    .getMany();
 
   return users;
 }
