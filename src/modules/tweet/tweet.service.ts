@@ -1,7 +1,10 @@
 import { getRepository } from 'typeorm';
 import { Tweet } from './tweet.entity';
 
-export async function addTweetService(payload: any, userId: number) {
+export async function addTweetService(
+  payload: any,
+  userId: number
+): Promise<Tweet> {
   const tweetRepo = getRepository(Tweet);
 
   const tweet = new Tweet();
@@ -14,7 +17,11 @@ export async function addTweetService(payload: any, userId: number) {
   return savedTweet;
 }
 
-export async function getTweetsService(userId: number, page = 1, limit = 10) {
+export async function getTweetsService(
+  userId: number,
+  page = 1,
+  limit = 10
+): Promise<Tweet[]> {
   const skipItems = (page - 1) * limit;
 
   const tweetRepo = getRepository(Tweet);
@@ -29,7 +36,10 @@ export async function getTweetsService(userId: number, page = 1, limit = 10) {
   return tweets;
 }
 
-export async function getTweetService(userId: number, tweetId: number) {
+export async function getTweetService(
+  userId: number,
+  tweetId: number
+): Promise<Tweet | undefined> {
   const tweetRepo = getRepository(Tweet);
 
   const tweet = await tweetRepo.findOne(tweetId);
@@ -37,7 +47,10 @@ export async function getTweetService(userId: number, tweetId: number) {
   return tweet;
 }
 
-export async function deleteTweetService(userId: number, tweetId: number) {
+export async function deleteTweetService(
+  userId: number,
+  tweetId: number
+): Promise<Tweet> {
   const tweetRepo = getRepository(Tweet);
 
   const tweetToDelete = await getTweetService(userId, tweetId);
@@ -55,7 +68,7 @@ export async function updateTweetService(
   payload: any,
   userId: number,
   tweetId: number
-) {
+): Promise<Tweet | undefined> {
   const tweetRepo = getRepository(Tweet);
 
   const tweetToUpdate = await tweetRepo.findOne(tweetId);
