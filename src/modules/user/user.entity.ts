@@ -5,7 +5,9 @@ import {
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Tweet } from '../tweet/tweet.entity';
 
 export enum Role {
   SUPER_ADMIN = 0,
@@ -29,6 +31,9 @@ export class User extends BaseEntity {
 
   @Column({ nullable: false })
   role: Role;
+
+  @OneToMany(() => Tweet, (tweet) => tweet.user, { eager: true })
+  tweets: Tweet[];
 
   @CreateDateColumn()
   createdAt: Date;

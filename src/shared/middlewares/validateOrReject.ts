@@ -15,8 +15,8 @@ export const validateOrRejectDtos = (dto: any, payloadFrom = 'body') => {
     }
 
     try {
+      console.log('payload: ', payload);
       await validateOrReject(new dto(payload));
-      console.log('working');
 
       next();
     } catch (e) {
