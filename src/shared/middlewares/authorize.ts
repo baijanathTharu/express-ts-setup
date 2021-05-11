@@ -21,18 +21,17 @@ export const authorize = async (
 
   if (!accessToken) {
     return res.status(FORBIDDEN).json({
-      message: 'not authorized',
+      error: 'not authorized',
     });
   }
   const [decoded, err] = await wrapPromise(
     verifyToken(accessToken, PRIVATE_KEY_FOR_ACCESSTOKEN)
   );
 
-  // Todo: refresh token
-  console.log('r: ', refreshToken);
   if (err && err.name === 'TokenExpiredError') {
     return res.status(EXPECTATION_FAILED).json({
       message: 'token expired - please login again',
+      error: err.message,
     });
   }
 

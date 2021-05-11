@@ -28,7 +28,7 @@ export async function loginController(req: Request, res: Response) {
    */
   if (!user) {
     return res.status(NOT_FOUND).json({
-      message: 'account not found - please signup first',
+      error: 'account not found - please signup first',
     });
   }
 
@@ -48,7 +48,7 @@ export async function loginController(req: Request, res: Response) {
    */
   if (!isMatching) {
     return res.status(FORBIDDEN).json({
-      message: 'password is wrong - please try again',
+      error: 'password is wrong - please try again',
     });
   }
 
@@ -76,7 +76,7 @@ export async function tokenController(
 
   if (!accessToken) {
     res.status(FORBIDDEN).json({
-      message: 'not authorized',
+      error: 'not authorized',
     });
     return;
   }
@@ -94,7 +94,7 @@ export async function tokenController(
     // console.log('e: ', { ...err });
     if (err && err.name === 'TokenExpiredError') {
       res.status(EXPECTATION_FAILED).json({
-        message: 'refresh token expired',
+        message: 'refresh token expired - please login again',
         error: err.message,
       });
       return;
@@ -111,15 +111,8 @@ export async function tokenController(
     if (err) throw err;
 
     // if refresh token is verified then generate new tokens
-    // console.log('decoded: ', decoded);
     const userId = decoded.id;
     const user = await getUserService(userId);
-
-    // const payload = { ...user };
-
-    // console.log('u: ', payload);
-
-    // res.json({ msg: 'ok' });
 
     const tokens = await createTokens({ ...user });
 

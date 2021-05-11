@@ -96,7 +96,7 @@ export async function updateUser(req: Request, res: Response): Promise<void> {
   const userId = req.userId;
 
   if (id !== userId) {
-    res.status(FORBIDDEN).json({ message: 'forbidden to update' });
+    res.status(FORBIDDEN).json({ error: 'forbidden to update' });
     return;
   }
 

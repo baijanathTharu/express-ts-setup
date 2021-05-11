@@ -9,12 +9,12 @@ export const errorHandler = (fn: Function) => {
     fn(req, res, next).catch((e: any) => {
       if (typeof e === 'string') {
         return res.status(BAD_REQUEST).json({
-          message: e,
+          error: e,
         });
       }
       if (e.name === 'QueryFailedError') {
         return res.status(BAD_REQUEST).json({
-          message: e.detail,
+          error: e.detail,
         });
       }
       // logger.err('message: ' + e.detail);
