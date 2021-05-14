@@ -18,3 +18,12 @@
 - user => (many to one)
 - content
 - comments => (one to many)
+
+## Designing Tweet endpoints
+
+- [x] adding tweet (addTweetByUserId)
+- [x] get all tweets of a user (getTweetsByUserId)
+
+- [x] get single tweet (getTweetById)
+- [x] user cannot delete others tweet so (deleteTweetByUserIdAndTweetId)
+- [x] similary for updating tweet (updateTweetByUserIdAndTweetId)

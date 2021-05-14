@@ -1,7 +1,7 @@
 import { getRepository } from 'typeorm';
 import { Tweet } from './tweet.entity';
 
-export async function addTweetService(
+export async function addTweetByUserIdService(
   payload: any,
   userId: number
 ): Promise<Tweet> {
@@ -17,7 +17,7 @@ export async function addTweetService(
   return savedTweet;
 }
 
-export async function getTweetsService(
+export async function getTweetsByUserIdService(
   userId: number,
   page = 1,
   limit = 10
@@ -36,7 +36,7 @@ export async function getTweetsService(
   return tweets;
 }
 
-export async function getTweetService(
+export async function getTweetByTweetIdService(
   userId: number,
   tweetId: number
 ): Promise<Tweet | undefined> {
@@ -53,7 +53,7 @@ export async function deleteTweetService(
 ): Promise<Tweet> {
   const tweetRepo = getRepository(Tweet);
 
-  const tweetToDelete = await getTweetService(userId, tweetId);
+  const tweetToDelete = await getTweetByTweetIdService(userId, tweetId);
 
   if (userId !== tweetToDelete?.userId) {
     throw 'not permitted';

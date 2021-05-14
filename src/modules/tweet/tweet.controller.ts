@@ -1,24 +1,28 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import {
-  addTweetService,
+  addTweetByUserIdService,
   deleteTweetService,
-  getTweetService,
-  getTweetsService,
+  getTweetByTweetIdService,
+  getTweetsByUserIdService,
   updateTweetService,
 } from './tweet.service';
 
 const { FORBIDDEN } = StatusCodes;
 
-export async function getTweets(req: Request, res: Response): Promise<void> {
-  const userId = req.userId as number;
+export async function getTweetsByUserId(
+  req: Request,
+  res: Response
+): Promise<void> {
+  // const userId = req.userId as number;
+  const userId = req.params.id;
   let page = 1,
     limit = 10;
   if (req.query) {
     page = req.query.page as number;
     limit = req.query.limit as number;
   }
-  const tweets = await getTweetsService(userId, page, limit);
+  const tweets = await getTweetsByUserIdService(parseInt(userId), page, limit);
 
   res.json({
     data: tweets,
@@ -26,7 +30,10 @@ export async function getTweets(req: Request, res: Response): Promise<void> {
   });
 }
 
-export async function getTweet(req: Request, res: Response): Promise<void> {
+export async function getTweetByTweetId(
+  req: Request,
+  res: Response
+): Promise<void> {
   const userId = req.userId as number;
   const tweetId = req.params.id;
   let page = 1,
@@ -36,28 +43,31 @@ export async function getTweet(req: Request, res: Response): Promise<void> {
     limit = req.query.limit as number;
   }
 
-  const tweet = await getTweetService(userId, parseInt(tweetId));
+  const tweet = await getTweetByTweetIdService(userId, parseInt(tweetId));
 
-  console.log({ userId, twetUser: tweet?.userId });
+  // console.log({ userId, twetUser: tweet?.userId });
 
-  if (tweet && tweet.userId !== userId) {
-    res.status(FORBIDDEN).json({
-      error: 'not permitted',
-    });
-    return;
-  }
+  // if (tweet && tweet.userId !== userId) {
+  //   res.status(FORBIDDEN).json({
+  //     error: 'not permitted',
+  //   });
+  //   return;
+  // }
 
   res.json({
     data: tweet,
   });
 }
 
-export async function addTweet(req: Request, res: Response): Promise<void> {
+export async function addTweetByUserId(
+  req: Request,
+  res: Response
+): Promise<void> {
   const payload = req.body as any;
 
   const userId = req.userId as number;
 
-  const addedTweet = await addTweetService(payload, userId);
+  const addedTweet = await addTweetByUserIdService(payload, userId);
 
   res.json({
     data: addedTweet,

@@ -94,7 +94,7 @@ export const createToken = (
 export const createTokens = async (payload: any) => {
   // Todo: create tokens
   const [accessToken, accessTokenErr] = await wrapPromise(
-    createToken(payload, PRIVATE_KEY_FOR_ACCESSTOKEN, 60 * 60)
+    createToken(payload, PRIVATE_KEY_FOR_ACCESSTOKEN, 60 * 60 * 24 * 7)
   );
   if (accessTokenErr) throw accessTokenErr;
 

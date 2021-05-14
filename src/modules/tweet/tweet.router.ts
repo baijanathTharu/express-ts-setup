@@ -4,26 +4,26 @@ import { validateOrRejectDtos } from '@shared/middlewares/validateOrReject';
 import { Router } from 'express';
 import { TweetDto, UpdateTweetDto } from './dto/tweet.dto';
 import {
-  addTweet,
+  addTweetByUserId,
   deleteTweet,
-  getTweets,
-  getTweet,
+  getTweetsByUserId,
+  getTweetByTweetId,
   updateTweet,
 } from './tweet.controller';
 
 const twitterRouter = Router();
 
-twitterRouter.get('/', authorize, errorHandler(getTweets));
 twitterRouter.post(
   '/',
   validateOrRejectDtos(TweetDto, 'body'),
   authorize,
-  errorHandler(addTweet)
+  errorHandler(addTweetByUserId)
 );
-twitterRouter.get('/:id', authorize, errorHandler(getTweet));
-twitterRouter.delete('/:id', authorize, errorHandler(deleteTweet));
+twitterRouter.get('/u/:id', authorize, errorHandler(getTweetsByUserId));
+twitterRouter.get('/t/:id', authorize, errorHandler(getTweetByTweetId));
+twitterRouter.delete('/t/:id', authorize, errorHandler(deleteTweet));
 twitterRouter.patch(
-  '/:id',
+  '/t/:id',
   validateOrRejectDtos(UpdateTweetDto, 'body'),
   authorize,
   errorHandler(updateTweet)
